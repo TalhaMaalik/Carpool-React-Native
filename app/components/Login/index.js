@@ -98,7 +98,7 @@ export default class Login extends Component {
         Alert.alert('Sucesss', "Logging you in", [{ text: 'OK' }], { cancelable: true });
         console.log(res.info().headers.session)
         AsyncStorage.setItem('session', res.info().headers.session);
-        this.props.navigation.navigate('register')
+        this.props.navigation.navigate('passenger')
         
       }
       else{
