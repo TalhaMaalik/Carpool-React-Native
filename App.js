@@ -13,10 +13,13 @@ import {createDrawerNavigator } from 'react-navigation-drawer';
 import Login from './app/components/Login';
 import Register from './app/components/Register';
 import MainPanelPassenger from './app/components/MainPanelPassenger'
+import LocationSearch from './app/components/MainPanelPassenger/LocationSearch'
 import Sidebar from './app/components/Sidebar'
 import MainPanelDriver from './app/components/MainPanelDriver'
 import Splash from './app/components/Splash'
 import VehicleRegistration from './app/components/VehicleRegistration'
+import { fromBottom } from 'react-navigation-transitions';
+
 
 
 export {
@@ -44,8 +47,16 @@ const StackNavigator = createStackNavigator({
 
 const Stackwithdrawerpassenger = createStackNavigator({
   mainpanelpassenger : MainPanelPassenger,
+  locationSearch: LocationSearch,
 
 }, 
+{
+  headerMode: 'none',
+  navigationOptions: {
+        headerVisible: false,
+  },
+  transitionConfig: () => fromBottom(),
+},
 {
   defaultNavigationOptions: {
     header: null,
