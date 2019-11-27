@@ -57,9 +57,9 @@ export default class Sidebar extends Component {
             <Text>Home</Text>  
            </ListItem>
 
-           <ListItem>
+           <ListItem onPress={() => this.props.navigation.navigate('settings')}>
 
-              <Button transparent>
+              <Button transparent >
                 <Icon active name="settings" style={styles.icn} />
               </Button>
 

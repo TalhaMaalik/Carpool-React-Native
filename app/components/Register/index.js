@@ -7,15 +7,12 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { RegisterRequest } from '../../API';
 
 
-
-
 export default class Register extends Component {
 
     static navigationOptions = {
       header: null
     }
     
-
     constructor(props){
 
       super(props);

@@ -19,7 +19,9 @@ import MainPanelDriver from './app/components/MainPanelDriver'
 import Splash from './app/components/Splash'
 import VehicleRegistration from './app/components/VehicleRegistration'
 import { fromBottom } from 'react-navigation-transitions';
-
+import SelectRide from './app/components/SelectRide';
+import ConfirmRide from './app/components/ConfirmRide';
+import Settings from './app/components/Settings';
 
 
 export {
@@ -48,6 +50,7 @@ const StackNavigator = createStackNavigator({
 const Stackwithdrawerpassenger = createStackNavigator({
   mainpanelpassenger : MainPanelPassenger,
   locationSearch: LocationSearch,
+  settings: Settings
 
 }, 
 {
@@ -66,6 +69,7 @@ const Stackwithdrawerpassenger = createStackNavigator({
 const Stackwithdrawerdriver = createStackNavigator({
   mainpaneldriver : MainPanelDriver,
   vehicleregistration : VehicleRegistration,
+  settings : Settings
 }, 
 {
   defaultNavigationOptions: {
@@ -98,6 +102,8 @@ const SwitchNavigator = createSwitchNavigator(
   //  login_register: StackNavigator,
     passenger: DrawerNavigatorpanel1,
     driver: DrawerNavigatorpanel2,
+  //  selectride: SelectRide,
+  //  confirmride: ConfirmRide,
 
   },
   {
