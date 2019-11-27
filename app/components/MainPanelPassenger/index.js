@@ -29,7 +29,6 @@ export default class MainPanelPassenger extends Component {
     componentDidMount(){
       Geolocation.getCurrentPosition(
         position => {
-          console.log(position)
           this.setState({ region:{
             latitude:position.coords.latitude,
             longitude:position.coords.longitude,
@@ -67,9 +66,9 @@ export default class MainPanelPassenger extends Component {
         <View style={{alignItems:"center"}}>
         <View style={styles.card}>
             <View style={styles.inputStyle}>
-              <TextInput placeholder="Pickup location"/>
+              <TouchableOpacity style={styles.locationButton} onPress={()=>{this.props.navigation.navigate('locationSearch')}}><Text style={{opacity:0.20}}>Pickup Location</Text></TouchableOpacity>
               <View style={{borderBottomColor: 'black',borderBottomWidth: 1,opacity:0.2,width:"100%"}}/>
-              <TextInput placeholder="Dropoff location"/>
+              <TouchableOpacity style={styles.locationButton} onPress={()=>{this.props.navigation.navigate('locationSearch')}}><Text style={{opacity:0.20}}>Dropoff Location</Text></TouchableOpacity>
             
             </View>
           </View>
@@ -122,12 +121,16 @@ export default class MainPanelPassenger extends Component {
       shadowOpacity: 0.8,
       shadowRadius: 1, 
       elevation:5,
-      borderRadius:3
+      borderRadius:5
       
     },
 
     inputStyle:{
       width:'95%',
+    },
+    locationButton:{
+      height:45,
+      justifyContent:"center"
     }
 
   });
