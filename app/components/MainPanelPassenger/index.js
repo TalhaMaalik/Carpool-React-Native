@@ -41,7 +41,7 @@ export default class MainPanelPassenger extends Component {
         error => console.log(error.message),
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 })
 
-    }
+    } 
 
 
     render() {
