@@ -1,7 +1,7 @@
 
 
 import React, {Component} from 'react';
-import {StyleSheet, View, ScrollView, TouchableOpacity,StatusBar,TextInput,Alert,Text } from 'react-native';
+import {StyleSheet, View, ScrollView, TouchableOpacity,StatusBar,TextInput,Alert,Text  } from 'react-native';
 import { Container, Header, Title, Button, Icon, Left, Body, Content, Textarea, Form, Right,Card, CardItem,Item, Input,Label} from "native-base";
 
 
@@ -14,6 +14,7 @@ export default class LocationSearch extends Component {
       return (
 
         <View style={styles.container}>
+
         <Header style={{backgroundColor: 'black'}}>   
         <StatusBar backgroundColor="black" barStyle="light-content" />    
           <Left >
