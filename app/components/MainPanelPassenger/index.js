@@ -71,8 +71,9 @@ export default class MainPanelPassenger extends Component {
               <TouchableOpacity style={styles.locationButton} onPress={()=>{this.props.navigation.navigate('locationSearch')}}><Text style={{opacity:0.20}}>Dropoff Location</Text></TouchableOpacity>
             
             </View>
-          </View>
         </View>
+        </View>
+        
       <MapView style={styles.map}
       region={this.state.region}
       initialRegion={{
@@ -80,7 +81,8 @@ export default class MainPanelPassenger extends Component {
       longitude: 67.074366,
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
-      }}/>   
+      }}/>
+
       </View>
       </View>
       );
@@ -131,6 +133,11 @@ export default class MainPanelPassenger extends Component {
     locationButton:{
       height:45,
       justifyContent:"center"
+    },
+
+    proceedButton: {
+      justifyContent:"center",
+      alignItems: 'center',
     }
 
   });

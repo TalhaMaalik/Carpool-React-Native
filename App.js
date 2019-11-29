@@ -22,6 +22,7 @@ import { fromBottom } from 'react-navigation-transitions';
 import SelectRide from './app/components/SelectRide';
 import ConfirmRide from './app/components/ConfirmRide';
 import Settings from './app/components/Settings';
+import RideDetailsDriver from './app/components/RideDetailsDriver';
 
 
 export {
@@ -102,6 +103,7 @@ const SwitchNavigator = createSwitchNavigator(
   //  login_register: StackNavigator,
     passenger: DrawerNavigatorpanel1,
     driver: DrawerNavigatorpanel2,
+  //  ridedetailsdriver: RideDetailsDriver,
   //  selectride: SelectRide,
   //  confirmride: ConfirmRide,
 
