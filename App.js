@@ -99,17 +99,16 @@ const DrawerNavigatorpanel2 = createDrawerNavigator(
 
 const SwitchNavigator = createSwitchNavigator(
   {
-  //  splash: Splash,
-  //  login_register: StackNavigator,
+    splash: Splash,
+    login_register: StackNavigator,
     passenger: DrawerNavigatorpanel1,
     driver: DrawerNavigatorpanel2,
-  //  ridedetailsdriver: RideDetailsDriver,
-  //  selectride: SelectRide,
-  //  confirmride: ConfirmRide,
+    selectride: SelectRide,
+    confirmride: ConfirmRide,
 
   },
   {
-    initialRouteName: 'passenger',
+    initialRouteName: 'splash',
   }
 ); 
 

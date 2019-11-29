@@ -133,10 +133,6 @@ export default class Login extends Component {
     YellowBox.ignoreWarnings(['Warning: Async Storage has been extracted from react-native core']);
 
     if(this.state.autolog==true){
-      return(<View><ProgressDialog visible={this.state.progressVisible} title="Loading" message="Please, wait..." /></View>)
-    }
-    else{
-
       return (
         <View style={styles.container}>
           <View style={styles.titleView}>
@@ -171,6 +167,10 @@ export default class Login extends Component {
         </View>
       );
 
+    }
+    else{
+        return(<View style={{justifyContent:'center',alignItems:"center"}}><Text style={{fontSize:30}}>Loading</Text></View>)
+      
     }
     
   }
