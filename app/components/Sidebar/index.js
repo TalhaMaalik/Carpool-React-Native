@@ -78,7 +78,7 @@ export default class Sidebar extends Component {
                
 
             <View style={styles.buttonView}>
-                <Button dark style = {styles.btn} onPress={() => this.props.navigation.navigate('vehicleregistration')}> 
+                <Button dark style = {styles.btn} onPress={() => this.props.navigation.navigate('mainpaneldriver')}> 
                   <Text>Become A Driver</Text>
                 </Button>
             </View>
