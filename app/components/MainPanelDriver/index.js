@@ -15,6 +15,7 @@ export default class MainPanelDriver extends Component {
   constructor(props) {
 
     super(props)
+    global.frompassenger=0
 
 
     this.state = {
@@ -141,10 +142,6 @@ export default class MainPanelDriver extends Component {
 
 
   render() {
-
-    console.log(this.state.pickup)
-    console.log(this.state.dropoff)
-
     var radius= 200
     if(this.state.fetchProcess==0){
       return(<View><ProgressDialog animationType="fade" visible={true} title="Fetching Data" message="Please, wait..." /></View>)
@@ -179,7 +176,7 @@ export default class MainPanelDriver extends Component {
             </View>
           </View>
           <View style={styles.buttonCard}>
-            <Button disabled={this.state.disabled} full style={styles.goButton} onPress={() => this.props.navigation.navigate('selectride')}><Text style={{ fontSize: 18 }}>Go</Text></Button>
+            <Button disabled={false} full style={styles.goButton} onPress={() => this.props.navigation.navigate('SelectRoute')}><Text style={{ fontSize: 18 }}>Go</Text></Button>
           </View>
           
           <MapView style={styles.map}

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, KeyboardAvo
 import { YellowBox } from 'react-native';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import RNFetchBlob from 'rn-fetch-blob';
-import { LoginRequest } from '../../API';
+import { LoginRequest, GetUserRequest } from '../../API';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
@@ -19,13 +19,13 @@ export default class Login extends Component {
       email: null,
       password: null,
       progressVisible: false,
-      autolog:false
+      autolog: false
 
     }
 
   }
 
-  componentWillMount(){
+  componentWillMount() {
 
     this._loadInitialState()
 
@@ -34,15 +34,61 @@ export default class Login extends Component {
   _loadInitialState = async () => {
 
     try {
-        var value = await AsyncStorage.getItem('session')
+      var session = await AsyncStorage.getItem('session')
 
-        if (value != null) {
-          this.props.navigation.navigate('passenger')
-          
+      if (session != null) {
+
+        try {
+          var email = await AsyncStorage.getItem('email')
+
+          if (email != null) {
+
+            RNFetchBlob.fetch('POST', GetUserRequest, {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+              JSON.stringify({
+                email: email,
+                session_id: session,
+              })
+            )
+              .then((res) => {
+                let text = res.json()
+                
+                if(text.status==200){
+                  global.name=text.data.name
+                  global.email=email
+                  global.isDriver=text.data.isDriver
+                  global.gender=text.data.gender
+                  global.session=session
+
+                  this.props.navigation.navigate('passenger')
+                  
+                }
+                else{
+                  this.setState({ autolog: true })
+                }
+      
+              })
+              .catch((errorMessage, statusCode) => {
+                this.setState({ autolog: true })
+               
+              })}
+          else {
+            this.setState({ autolog: true })
+          }
+
+        } catch (error) {
+          this.setState({ autolog: true })
         }
-        
+
+      }
+      else {
+        this.setState({ autolog: true })
+      }
+
     } catch (error) {
-        this.setState({autolog:true})
+      this.setState({ autolog: true })
     }
 
   }
@@ -72,48 +118,47 @@ export default class Login extends Component {
         { cancelable: false },
       );
     }
-    else{
+    else {
       this.setState({
         progressVisible: true
       })
       
-      console.log(this.state.email)
-      console.log(this.state.password)
-  RNFetchBlob.fetch('POST', LoginRequest, {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  },
-    JSON.stringify({
-      email: this.state.email,
-      password: this.state.password,  
-    })
-  )
-    .then((res) => {
-      let text = res.json()
-      this.setState({
-        progressVisible: false
-      })
+      RNFetchBlob.fetch('POST', LoginRequest, {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+        JSON.stringify({
+          email: this.state.email,
+          password: this.state.password,
+        })
+      )
+        .then((res) => {
+          let text = res.json()
+          this.setState({
+            progressVisible: false
+          })
 
-      if(text.status == 200){
-        Alert.alert('Sucesss', "Logging you in", [{ text: 'OK' }], { cancelable: true });
-        console.log(res.info().headers.session)
-        AsyncStorage.setItem('session', res.info().headers.session);
-        this.props.navigation.navigate('passenger')
-        
-      }
-      else{
-        Alert.alert('Error', "Invalid Email/Password", [{ text: 'OK' }], { cancelable: true });
-      }
+          if (text.status == 200) {
+            Alert.alert('Sucesss', "Logging you in", [{ text: 'OK' }], { cancelable: true });
+            console.log(res.info().headers.session)
+            AsyncStorage.setItem('session', res.info().headers.session);
+            AsyncStorage.setItem('email', this.state.email);
+            this._loadInitialState()
+
+          }
+          else {
+            Alert.alert('Error', "Invalid Email/Password", [{ text: 'OK' }], { cancelable: true });
+          }
 
 
-    })
-    .catch((errorMessage, statusCode) => {
-      this.setState({
-        progressVisible: false
-      })
-      Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
-    })
-    } 
+        })
+        .catch((errorMessage, statusCode) => {
+          this.setState({
+            progressVisible: false
+          })
+          Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+        })
+    }
 
   }
 
@@ -132,7 +177,7 @@ export default class Login extends Component {
   render() {
     YellowBox.ignoreWarnings(['Warning: Async Storage has been extracted from react-native core']);
 
-    if(this.state.autolog==true){
+    if (this.state.autolog == true) {
       return (
         <View style={styles.container}>
           <View style={styles.titleView}>
@@ -140,7 +185,7 @@ export default class Login extends Component {
               NUCES Carpool
                </Text>
           </View>
-  
+
           <View style={styles.inputView}>
             <Text style={styles.text}>Enter Your NU mail</Text>
             <TextInput style={styles.inputText} placeholder="Email"
@@ -151,12 +196,12 @@ export default class Login extends Component {
               onChangeText={text => this.setState({ password: text })}
             />
           </View>
-  
+
           <View style={styles.buttonView}>
             <TouchableOpacity onPress={() => this.requestLogin()} style={styles.btn}>
               <Text>Login</Text>
             </TouchableOpacity>
-  
+
             <Text style={styles.textBottom} onPress={() => this.props.navigation.navigate('register')}>
               {"\n"}
               No Account ? {"\n"}
@@ -168,11 +213,11 @@ export default class Login extends Component {
       );
 
     }
-    else{
-        return(<View style={{justifyContent:'center',alignItems:"center"}}><Text style={{fontSize:30}}>Loading</Text></View>)
-      
+    else {
+      return (<View style={{ justifyContent: 'center', alignItems: "center", flex: 1 }}><Text style={{ fontSize: 30 }}>Loading...</Text></View>)
+
     }
-    
+
   }
 }
 
@@ -229,7 +274,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 14,
     borderWidth: 1,
-    
+
     backgroundColor: 'white',
   },
 
@@ -239,7 +284,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     fontSize: 14,
     borderWidth: 1,
-    
+
     justifyContent: 'center',
     alignItems: 'center'
   }

@@ -115,6 +115,8 @@ export default class LocationSearch extends Component {
 
   render() {
 
+    
+
     return (
 
       <View style={styles.container}>
@@ -163,7 +165,7 @@ export default class LocationSearch extends Component {
 const styles = StyleSheet.create({
 
   container: {
-    flex: 1
+    flex: 1,
   },
   body: {
     flex: 1

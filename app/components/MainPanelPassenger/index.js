@@ -13,6 +13,7 @@ export default class MainPanelPassenger extends Component {
   constructor(props) {
 
     super(props)
+    global.frompassenger=1
 
 
     this.state = {
@@ -34,7 +35,7 @@ export default class MainPanelPassenger extends Component {
       },
       radius:3000,
       fetchProcess:0,
-      disabled:true
+      disabled:true,
 
     }
 
