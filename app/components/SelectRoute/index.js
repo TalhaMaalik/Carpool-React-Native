@@ -16,6 +16,8 @@ export default class SelectRoute extends Component {
           pickupObject: null,
           textInput : [],
           points: [],
+          objects:[],
+          disabled:true
     
         }
       }
@@ -72,6 +74,15 @@ export default class SelectRoute extends Component {
                   point.push(obj)
                   this.setState({ points: point })
 
+                  let object = [ ...this.state.objects ]
+                  let temp={lat: text.results[0].geometry.location.lat, lon: text.results[0].geometry.location.lng}
+                  object.push(temp)
+                  this.setState({ objects: object })
+
+                  if(this.state.points.length>0){
+                    this.setState({disabled:false})
+                  }
+
                 }
             })
     
@@ -79,12 +90,12 @@ export default class SelectRoute extends Component {
       }
       renderPoints(){
         var points= this.state.points
-        if (points == null) {
-          return null
+        if (points.length==0) {
+          return (<View><Text>You need atleast 1 pickup point</Text></View>)
         }
 
         return Object.entries(points).map((v, index) => {
-          return (<View key={index} style={{backgroundColor:'#7CC1F0',width:'100%',height:50, flexDirection:"row",alignItems:'center'}}><View style={{flex:0.90}}><Text style={{marginLeft: 16,fontSize:16,color:"white"}}>{v[1].name}</Text></View><View style={{flex:0.1}}><Icon onPress={()=>{this.removeItem(v[0])}} style={{alignItems:'flex-end',color:'red'}} name='close' /></View></View>)
+          return (<View key={index} style={{backgroundColor:'#3b5fcc',width:'100%',height:50, flexDirection:"row",alignItems:'center'}}><View style={{flex:0.90}}><Text style={{marginLeft: 16,fontSize:16,color:"white"}}>{v[1].name}</Text></View><View style={{flex:0.1}}><Icon onPress={()=>{this.removeItem(v[0])}} style={{alignItems:'flex-end',color:'red'}} name='close' /></View></View>)
         })
 
       }
@@ -114,7 +125,7 @@ export default class SelectRoute extends Component {
       mapSearch() {
         var searchArray = this.state.search;
         if (searchArray == null) {
-          return null
+          return
         }
         return Object.entries(searchArray).map((v, index) => {
           return (<TouchableOpacity onPress={() => { this.locationSelect(v[1]) }} key={index}>
@@ -132,8 +143,7 @@ export default class SelectRoute extends Component {
       r
     
       render() {
-        console.log(this.state.points)
-          
+        global.points=this.state.objects
         return (
           <View style={styles.container}>
             <Header style={{ backgroundColor: 'black' }}>
@@ -174,7 +184,7 @@ export default class SelectRoute extends Component {
     
             </View>
 
-            <View style={{flex:1,justifyContent:'flex-start',alignItems:'center'}}><Button disabled style={{width:"90%", alignItems:'center',justifyContent:'center',height:60}}><Text style={{color:"white",fontSize:16}}>CONFIRM</Text></Button></View>
+            <View style={{flex:1,justifyContent:'flex-start',alignItems:'center'}}><Button disabled={this.state.disabled} onPress={()=>{this.props.navigation.navigate('RideDetailsDriver')}} style={{width:"90%", alignItems:'center',justifyContent:'center',height:60}}><Text style={{color:"white",fontSize:16}}>CONFIRM</Text></Button></View>
            
     
           </View>

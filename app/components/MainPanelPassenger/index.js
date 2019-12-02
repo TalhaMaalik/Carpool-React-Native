@@ -142,6 +142,21 @@ export default class MainPanelPassenger extends Component {
   render() {
 
     var radius= parseInt(this.state.radius)
+    global.radius=this.state.radius
+    var pickup={
+      lat:this.state.pickup.lat,
+      lon:this.state.pickup.lon
+    }
+    global.passengerpickup= pickup
+    
+    var dropoff={
+      lat:this.state.dropoff.lat,
+      lon:this.state.dropoff.lon
+    }
+    global.passengerdropoff= dropoff
+
+
+
     if(this.state.fetchProcess==0){
       return(<View><ProgressDialog animationType="fade" visible={true} title="Fetching Data" message="Please, wait..." /></View>)
     }
@@ -177,7 +192,7 @@ export default class MainPanelPassenger extends Component {
 
           <View style={styles.buttonCard}>
             <Button disabled={this.state.disabled} full style={styles.goButton} onPress={() => this.props.navigation.navigate('selectride')}><Text style={{ fontSize: 18 }}>Search</Text></Button>
-            <Picker style={{height: 65,fontSize:60,}} selectedValue={this.state.radius}
+            <Picker style={{height: 65,fontSize:60}} selectedValue={this.state.radius}
                       onValueChange={(itemValue, itemIndex) =>
                         this.setState({radius: itemValue})
                     }>

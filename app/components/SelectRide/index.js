@@ -1,23 +1,117 @@
 
 
 import React, {Component} from 'react';
-import {StyleSheet, View, ScrollView, Picker,StatusBar} from 'react-native';
-import { Container, Header, Title, Icon, Left, Body, Button,Content, Input, Item, Right, Text } from "native-base";
-import { Form, Card, CardItem} from "native-base";
+import {StyleSheet, View, ScrollView,StatusBar,TouchableOpacity} from 'react-native';
+import { Header, Title, Icon, Left, Body, Button, Right, Text } from "native-base";
+import { Card, CardItem} from "native-base";
 import { Searchbar } from 'react-native-paper';
 import RadioForm from 'react-native-simple-radio-button';
+import { GetRides } from '../../API';
+import RNFetchBlob from 'rn-fetch-blob';
 
 
 export default class SelectRide extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          selected: undefined
+          selected: undefined,
+          data:[],
+          time:null
         };
       }
       
 
+      componentDidMount(){
+
+        var radius=global.radius
+        var pickup=global.passengerpickup
+        var dropoff=global.passengerdropoff
+        radius=radius/1000
+        var date= new Date()
+        var datetime=date.toDateString()
+        var time= date.toTimeString()
+        datetime= datetime.split(" ")[3]+"-"+"12"+"-"+datetime.split(" ")[2]+" "+time.split(" ")[0]
+        var email=global.email
+        var session=global.session
+        this.setState({time:datetime})
+        RNFetchBlob.fetch('POST', GetRides, {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+          JSON.stringify({
+            email: email,
+            session_id: session,
+            time:datetime,
+            radius: radius,
+            pickUp: pickup,
+            dropOff: dropoff
+          })
+        )
+          .then((res) => {
+            let text = res.json()
+            console.log(text)
+            if(text.status==200){
+              this.setState({data:text.data})
+            }
+            else{
+              Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+            }
+           
+          })
+          .catch((errorMessage, statusCode) => {
+            
+            Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+          })
+      }
+
+      renderList(){
+
+        var array = this.state.data;
+        if (array.length==0) {
+          return(<View style={{alignItems:'center'}} ><Text>No Rides found.</Text></View>)
+        }
+        return Object.entries(array).map((v, index) => {
+          return (<TouchableOpacity key={v}  onPress={()=> this.props.navigation.navigate('confirmride',{data:v[1],time:this.state.time})}><Card>
+            <CardItem  style={styles.cardtitle}>
+            <Body style={styles.cardbody}>
+                <Text>
+                 Fee: {v[1].fee}
+                </Text>
+                
+              </Body>
+            </CardItem>
+            <CardItem>
+              <Body style={styles.cardbody}>
+                <Text>
+                Time: {v[1].time.replace("T"," ").split(" ")[1].slice(0,5)} - {v[1].time.replace("T"," ").split(" ")[0]}
+                </Text>
+                
+              </Body>
+            </CardItem>
+            <CardItem style={styles.cardtitle}>
+            <Body style={styles.cardbody}>
+                <Text>
+                 From: {v[1].startLoc}
+                </Text>
+                
+              </Body>          
+            </CardItem>
+            <CardItem style={styles.cardtitle}>
+            <Body style={styles.cardbody}>
+                <Text>
+                 Available Seats: {v[1].seats}
+                </Text>
+                
+              </Body>          
+            </CardItem> 
+         </Card></TouchableOpacity>)
+        })
+      }
+
+
     render() {
+
+     
       var radio_props = [
         {label: 'Any     ', value: "1" },
         {label: 'Same', value: "0" }
@@ -42,92 +136,11 @@ export default class SelectRide extends Component {
           </Right>
         </Header>
 
-        <View style={styles.filters}>
-          <View style={{flex:1}}><RadioForm buttonSize={15} buttonColor={'#2196f3'} labelStyle={{fontSize: 15}}  buttonStyle={{color:"black"}}
-                   radio_props={radio_props}
-                   initial={0}
-                   formHorizontal={true}
-                   onPress={(value) => {this.setState({gender:value})}}/></View>
-          <View style={{flex:1, backgroundColor: '#E8EDEF'}}><Searchbar style={styles.search}placeholder="Maximum fare"/></View>
-        </View>
         
           <ScrollView>   
             <View style={{marginTop:10}}>
-              <Card>
-                <CardItem  style={styles.cardtitle}>
-                  <Text >Leaving Time</Text>
-                </CardItem>
-                <CardItem>
-                  <Body style={styles.cardbody}>
-                    <Text>
-                      Ride fair
-                    </Text>
-                    <Text>
-                      Available Seats
-                    </Text>
-                  </Body>
-                </CardItem>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Route</Text>
-                </CardItem>
-             </Card>
-    
-             <Card>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Leaving Time</Text>
-                </CardItem>
-                <CardItem>
-                <Body style={styles.cardbody}>
-                    <Text>
-                      Ride fair
-                    </Text>
-                    <Text>
-                      Available Seats
-                    </Text>
-                  </Body>
-                </CardItem>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Route</Text>
-                </CardItem>
-             </Card>
-    
-             <Card>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Leaving Time</Text>
-                </CardItem>
-                <CardItem>
-                  <Body style={styles.cardbody}>
-                    <Text>
-                      Ride fair
-                    </Text>
-                    <Text>
-                      Available Seats
-                    </Text>
-                  </Body>
-                </CardItem>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Route</Text>
-                </CardItem>
-             </Card>
-    
-             <Card>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Leaving Time</Text>
-                </CardItem>
-                <CardItem>
-                  <Body style={styles.cardbody}>
-                    <Text>
-                      Ride fair
-                    </Text>
-                    <Text>
-                      Available Seats
-                    </Text>
-                  </Body>
-                </CardItem>
-                <CardItem style={styles.cardtitle}>
-                  <Text>Route</Text>
-                </CardItem>
-             </Card>
+              {this.renderList()}
+             
             </View> 
               
             </ScrollView>

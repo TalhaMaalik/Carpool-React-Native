@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView } from 'react-native';
+import {StyleSheet, Text, View, TextInput, TouchableOpacity, Alert} from 'react-native';
 import {AsyncStorage,YellowBox} from 'react-native';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import RadioForm from 'react-native-simple-radio-button';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import RNFetchBlob from 'rn-fetch-blob';
 import { RegisterRequest } from '../../API';

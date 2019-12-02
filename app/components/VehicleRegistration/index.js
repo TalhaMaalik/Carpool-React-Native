@@ -1,8 +1,8 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity,Alert} from 'react-native';
+import { StyleSheet, View, TextInput,Alert} from 'react-native';
 import { AsyncStorage, YellowBox } from 'react-native';
-import { Container, Header, Title, Icon, Left, Body, Button,Content, Input, Item, Right, Text } from "native-base";
+import {  Button, Text } from "native-base";
 import { SetDriverRequest } from '../../API';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -73,6 +73,7 @@ export default class Login extends Component {
             progressVisible: false
           })
           if (text.status == 200) {
+            console.log("here")
             Alert.alert('Sucesss', "Registered", [{ text: 'OK' }], { cancelable: true });
             global.isDriver=1
             this.props.navigation.navigate('mainpagedriver')

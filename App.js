@@ -24,6 +24,8 @@ import ConfirmRide from './app/components/ConfirmRide';
 import Settings from './app/components/Settings';
 import RideDetailsDriver from './app/components/RideDetailsDriver';
 import SelectRoute from './app/components/SelectRoute';
+import DriverRides from './app/components/DriverRides';
+import PassengerRides from './app/components/PassengerRides'
 import LocationSearchDriver from './app/components/MainPanelDriver/LocationSearchDriver'
 
 
@@ -56,7 +58,9 @@ const Stackwithdrawerpassenger = createStackNavigator({
   settings: Settings,
   selectride: SelectRide,
   confirmride: ConfirmRide,
-  VehicleRegistration: VehicleRegistration
+  VehicleRegistration: VehicleRegistration,
+  DriverRides:DriverRides,
+  PassengerRides:PassengerRides
 
 }, 
 {
@@ -78,7 +82,10 @@ const Stackwithdrawerdriver = createStackNavigator({
   settings : Settings,
   LocationSearchDriver: LocationSearchDriver,
   SelectRoute: SelectRoute,
-  VehicleRegistration:VehicleRegistration
+  VehicleRegistration:VehicleRegistration,
+  RideDetailsDriver:RideDetailsDriver,
+  DriverRides:DriverRides,
+  PassengerRides:PassengerRides
 }, 
 {
   defaultNavigationOptions: {
@@ -107,15 +114,15 @@ const DrawerNavigatorpanel2 = createDrawerNavigator(
 
 const SwitchNavigator = createSwitchNavigator(
   {
-  //  splash: Splash,
-  //  login_register: StackNavigator,
+    splash: Splash,
+    login_register: StackNavigator,
     passenger: DrawerNavigatorpanel1,
     driver: DrawerNavigatorpanel2,
     
 
   },
   {
-    initialRouteName: 'passenger',
+    initialRouteName: 'splash',
   }
 ); 
 

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Alert } from 'react-native';
 import {Avatar} from 'react-native-paper'
-import { Provider as PaperProvider, List} from 'react-native-paper';
-import { Button, ListItem, Text, Icon, Left, Body,Right } from 'native-base';
+import { Provider as PaperProvider} from 'react-native-paper';
+import { Button, ListItem, Text, Icon } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
@@ -72,6 +72,37 @@ export default class Sidebar extends Component {
 
       }
 
+      renderTrips(){
+
+        if(global.frompassenger==1){
+          return(
+            <ListItem onPress={() => this.props.navigation.navigate('PassengerRides')}>
+
+              <Button transparent >
+                <Icon active name="car" style={styles.icn} />
+              </Button>
+
+              <Text>Your Trips</Text>
+          
+          </ListItem>
+         )
+        }
+        else{
+          return(
+            <ListItem onPress={() => this.props.navigation.navigate('DriverRides')}>
+
+              <Button transparent >
+                <Icon active name="car" style={styles.icn} />
+              </Button>
+
+              <Text>Your Rides</Text>
+          
+          </ListItem>
+
+          )
+        }
+      }
+
       
     render() {
       return (
@@ -101,15 +132,7 @@ export default class Sidebar extends Component {
             <Text>Home</Text>  
            </ListItem>
 
-           <ListItem onPress={() => this.props.navigation.navigate('settings')}>
-
-              <Button transparent >
-                <Icon active name="settings" style={styles.icn} />
-              </Button>
-
-              <Text>Settings</Text>
-          
-          </ListItem>
+           {this.renderTrips()}
 
           <ListItem  onPress={() => this.logout()} >
               <Button transparent>

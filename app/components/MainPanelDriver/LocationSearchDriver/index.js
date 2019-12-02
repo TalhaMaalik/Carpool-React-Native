@@ -18,7 +18,8 @@ export default class LocationSearchDriver extends Component {
       search: null,
       pickupSearch: 0,
       pickupObject: null,
-      dropoffObject: null
+      dropoffObject: null,
+    
 
     }
   }

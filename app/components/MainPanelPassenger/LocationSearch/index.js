@@ -1,8 +1,8 @@
 
 
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar, TextInput, Alert, Text } from 'react-native';
-import { Container, Header, Title, Button, Icon, Left, Body, Content, Textarea, Form, Right, Card, CardItem, Item, Input, Label } from "native-base";
+import { StyleSheet, View, TouchableOpacity, StatusBar, TextInput, Text } from 'react-native';
+import { Header, Title, Button, Icon, Left, Body, Right } from "native-base";
 import RNFetchBlob from 'rn-fetch-blob';
 
 

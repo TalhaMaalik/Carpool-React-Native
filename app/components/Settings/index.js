@@ -2,10 +2,9 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, View, Picker} from 'react-native';
-import { Container, Header, Title, Icon, Left, Body, Button,Content, Input, Item, Right, Text } from "native-base";
-import { Form, Card, CardItem} from "native-base";
-import { Searchbar } from 'react-native-paper';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import { Header, Title, Icon, Left, Body, Button,Right, Text } from "native-base";
+import { Card, CardItem} from "native-base";
+import RadioForm from 'react-native-simple-radio-button';
 
 
 export default class ConfirmRide extends Component {

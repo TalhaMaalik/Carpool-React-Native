@@ -1,21 +1,30 @@
 
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Picker, TouchableOpacity} from 'react-native';
-import { Container, Header, Title, Icon, Left, Body, Button,Content, Input, Item, Right, Text } from "native-base";
-import { Form, Card, CardItem} from "native-base";
-import { Searchbar } from 'react-native-paper';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import {StyleSheet, View, Picker, StatusBar,Alert} from 'react-native';
+import { Header, Title, Icon, Left, Body, Button, Right, Text ,DatePicker} from "native-base";
+import { Card, CardItem} from "native-base";
 import TimePicker from "react-native-24h-timepicker";
+import RNFetchBlob from 'rn-fetch-blob';
+import { AddRide } from '../../API';
 
 
 export default class ConfirmRide extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          language: undefined,
-          time: "0:00"
+          time: "0:00",
+          chosenDate: new Date(),
+          seats:1,
+          fees:50,
+          booking:0
         };
+
+        this.setDate = this.setDate.bind(this);
+    }
+
+    setDate(newDate) {
+      this.setState({ chosenDate: newDate });
     }
 
     onCancel() {
@@ -27,16 +36,105 @@ export default class ConfirmRide extends Component {
       this.TimePicker.close();
     }
 
+    postRide(){
+      var seats= this.state.seats
+      var fees= this.state.fees
+      var time= this.state.time+":00"
+      var date= this.state.chosenDate.toDateString()
+      var dateformat=date.split(" ")[3]+"-"+"12"+"-"+date.split(" ")[2]
+      var email= global.email
+      var session= global.session
+      var startLocation=global.driverpickup.name
+      var endLocation=global.driverdrop.name
+      var datetime= dateformat+" "+time
+      var points=global.points
+      
+      if(time=="0:00:00"){
+        Alert.alert('Error',"Select time for ride",[{ text: 'OK' }, ],{ cancelable: false });
+      }
+      else{
+
+      var start={
+        lat:global.driverpickup.lat,
+        lon:global.driverpickup.lon
+      }
+      var end={
+        lat:global.driverdrop.lat,
+        lon:global.driverdrop.lon
+      }
+      
+      points.splice( 0, 0, start );
+      points.push(end)
+
+    
+
+        RNFetchBlob.fetch('POST', AddRide, {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+          JSON.stringify({
+            email: email,
+            session_id: session,
+            seats: seats,
+            fee: fees,
+            startLocation:startLocation,
+            endLocation: endLocation,
+            time:datetime,
+            locations:points
+          })
+        )
+          .then((res) => {
+            let text = res.json()
+            
+            
+            if(text.status==200){
+              Alert.alert('Success', "Your ride is posted", [{ text: 'OK' }], { cancelable: true });
+              this.setState({booking:1})
+            }
+            else{
+              Alert.alert('Error', "Your inputs are not valid", [{ text: 'OK' }], { cancelable: true });
+            }
+           
+          })
+          .catch((errorMessage, statusCode) => {
+            
+            Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+          })
+
+      }
+
+
+    }
+
+    cancelBooking(){
+      console.log("cancelled")
+
+    }
+
+    renderButton(){
+
+      if(this.state.booking==0){
+
+        return(  <Button style = {styles.btn} onPress={()=>{this.postRide()}}> 
+        <Text>Post Ride Info</Text>
+        </Button>)
+
+      }
+      else{
+        return(  <Button success style = {styles.btn} onPress={()=> this.props.navigation.navigate('DriverRides')}> 
+        <Text>Go to Booking</Text>
+        </Button>)
+
+      }
+     }
+
+
     render() {
-        var radio_props = [
-            {label: 'Male     ', value: "male" },
-            {label: 'Female   ', value: "female" },
-            {label: 'Any', value: "any" },
-          ];
      
       return (
         <View style={styles.container}> 
-        <Header style={{backgroundColor: 'black'}}>       
+        <Header style={{backgroundColor: 'black'}}>   
+        <StatusBar backgroundColor="black" barStyle="light-content" />    
           <Left >
             <Button transparent  onPress={() => this.props.navigation.openDrawer()}>
               <Icon name='menu' />
@@ -51,17 +149,17 @@ export default class ConfirmRide extends Component {
           </Right>
         </Header>
 
-        <View style={{marginTop: 20}}>
-             <Card>   
-                <CardItem>
+        <View style={{flex:1}}>
+             <Card style={{height:'100%'}}>   
+                <CardItem style={styles.cardStyle}>
                   <Body>
                   <Text style={styles.text}>Select Seats Available </Text>
                   <Text></Text>
                    <Picker
-                      selectedValue={this.state.language}
+                      selectedValue={this.state.seats}
                       style={{height: 25, width: 130}}
                       onValueChange={(itemValue, itemIndex) =>
-                        this.setState({language: itemValue})
+                        this.setState({seats: itemValue})
                     }>
                     <Picker.Item label="1" value="1" />
                     <Picker.Item label="2" value="2" />
@@ -73,15 +171,15 @@ export default class ConfirmRide extends Component {
                 </CardItem>
                 
 
-                <CardItem>
+                <CardItem style={styles.cardStyle}>
                   <Body >
                   <Text style={styles.text}>Enter Amount Per Seat</Text>
                   <Text></Text>
                   <Picker
-                      selectedValue={this.state.language}
+                      selectedValue={this.state.fees}
                       style={{height: 25, width: 130}}
                       onValueChange={(itemValue, itemIndex) =>
-                        this.setState({language: itemValue})
+                        this.setState({fees: itemValue})
                     }>
                     <Picker.Item label="50 PKR" value="50" />
                     <Picker.Item label="100 PKR" value="100" />
@@ -95,12 +193,35 @@ export default class ConfirmRide extends Component {
                 </CardItem>
 
                 
-                <CardItem>
+                <CardItem style={styles.cardStyle}>
+                  <Body >
+                  <Text style={styles.text}>Select Date</Text>
+                  <Text></Text>
+                  <DatePicker
+                  defaultDate={new Date(2019, 11, 3)}
+                  minimumDate={new Date(2019, 11, 3)}
+                  maximumDate={new Date(2019, 11, 31)}
+                  locale={"en"}
+                  timeZoneOffsetInMinutes={undefined}
+                  modalTransparent={false}
+                  animationType={"fade"}
+                  androidMode={"default"}
+                  placeHolderText={this.state.chosenDate.toDateString()}
+                  textStyle={{ color: "black" }}
+                  placeHolderTextStyle={{ color: "black" }}
+                  onDateChange={this.setDate}
+                  disabled={false}
+                  />
+                  </Body>
+                
+                </CardItem>
+
+                <CardItem style={styles.cardStyle}>
                   <Body >
                   <Text style={styles.text}>Select Leaving Time</Text>
                   <Text></Text>
 
-                  <Text onPress={() => this.TimePicker.open()} style={styles.text} >{this.state.time}  </Text>
+                  <Text onPress={() => this.TimePicker.open()} style={{marginLeft:11}}>{this.state.time}  </Text>
                   
                   <TimePicker
                   ref={ref => {
@@ -113,26 +234,11 @@ export default class ConfirmRide extends Component {
                   </Body>
                 
                 </CardItem>
-
-                <CardItem>
-                  <Body style={styles.cardbody}>
-                  <Text style={styles.text}>Select Genger Preference</Text>
-                  <Text></Text>
-          <RadioForm
-                radio_props={radio_props}
-                initial={0}
-                formHorizontal={true}
-                onPress={(value) => {this.setState({gender:value})}}
-          />
-                  </Body>
-                  
-                </CardItem>
+              
                 <Text></Text>
                 <CardItem footer >
                 <View style={styles.buttonView}>
-                    <Button dark style = {styles.btn}> 
-                    <Text>Post Ride Info</Text>
-                    </Button>
+                  {this.renderButton()}
                 </View>
                 </CardItem>
              </Card>
@@ -185,6 +291,11 @@ export default class ConfirmRide extends Component {
         color: 'black',
         fontSize: 20
       },
+      cardStyle:{
+        backgroundColor:'#f7f7f7',
+        borderBottomWidth:1,
+        borderBottomColor:'gray'
+      }
 
   });
   

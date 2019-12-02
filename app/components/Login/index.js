@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { YellowBox } from 'react-native';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -37,11 +37,11 @@ export default class Login extends Component {
       var session = await AsyncStorage.getItem('session')
 
       if (session != null) {
-
         try {
           var email = await AsyncStorage.getItem('email')
 
           if (email != null) {
+
 
             RNFetchBlob.fetch('POST', GetUserRequest, {
               'Accept': 'application/json',
@@ -54,26 +54,27 @@ export default class Login extends Component {
             )
               .then((res) => {
                 let text = res.json()
-                
-                if(text.status==200){
-                  global.name=text.data.name
-                  global.email=email
-                  global.isDriver=text.data.isDriver
-                  global.gender=text.data.gender
-                  global.session=session
+
+                if (text.status == 200) {
+                  global.name = text.data.name
+                  global.email = email
+                  global.isDriver = text.data.isDriver
+                  global.gender = text.data.gender
+                  global.session = session
 
                   this.props.navigation.navigate('passenger')
-                  
+
                 }
-                else{
+                else {
                   this.setState({ autolog: true })
                 }
-      
+
               })
               .catch((errorMessage, statusCode) => {
                 this.setState({ autolog: true })
-               
-              })}
+
+              })
+          }
           else {
             this.setState({ autolog: true })
           }
@@ -122,7 +123,7 @@ export default class Login extends Component {
       this.setState({
         progressVisible: true
       })
-      
+
       RNFetchBlob.fetch('POST', LoginRequest, {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -175,7 +176,7 @@ export default class Login extends Component {
   }
 
   render() {
-    YellowBox.ignoreWarnings(['Warning: Async Storage has been extracted from react-native core']);
+    YellowBox.ignoreWarnings(['Warning: Async Storage has been extracted from react-native core', 'Warning: componentWillMount', "Warning: componentWillMount has been renamed", "componentWillReceiveProps", "Warning: DatePickerIOS "]);
 
     if (this.state.autolog == true) {
       return (
