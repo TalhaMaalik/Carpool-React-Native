@@ -1,12 +1,12 @@
 
 
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar, TextInput, Alert, Text } from 'react-native';
-import { Container, Header, Title, Button, Icon, Left, Body, Content, Textarea, Form, Right, Card, CardItem, Item, Input, Label } from "native-base";
+import { StyleSheet, View,TouchableOpacity, StatusBar, TextInput, Text } from 'react-native';
+import {  Header, Title, Button, Icon, Left, Body, Right} from "native-base";
 import RNFetchBlob from 'rn-fetch-blob';
 
 
-export default class LocationSearch extends Component {
+export default class LocationSearchDriver extends Component {
 
   constructor(props) {
 
@@ -87,7 +87,7 @@ export default class LocationSearch extends Component {
         if (text.status == "OK") {
           var dropoffObj = { name: location.description.split(',')[0], lat: text.results[0].geometry.location.lat, lon: text.results[0].geometry.location.lng }
           this.setState({ dropoffObject: dropoffObj })
-          this.props.navigation.navigate("mainpanelpassenger", { pickupObject: this.state.pickupObject, dropoffObject: this.state.dropoffObject })
+          this.props.navigation.navigate("mainpaneldriver", { pickupObject: this.state.pickupObject, dropoffObject: this.state.dropoffObject })
         }
 
       })
@@ -104,7 +104,7 @@ export default class LocationSearch extends Component {
       return (<TouchableOpacity onPress={() => { this.locationSelect(v[1]) }} key={index}>
         <View style={styles.locationBlock}>
           <View style={styles.locationText}>
-            <View styles={styles.locationUpperText}><Text style={{ fontSize: 18,color:'black' }}>{v[1].description.split(',')[0]}</Text></View>
+            <View styles={styles.locationUpperText}><Text style={{ fontSize: 18,color:'black'}}>{v[1].description.split(',')[0]}</Text></View>
             <View styles={styles.locationLowerText}><Text style={{ fontSize: 15, opacity: 0.5,color:'black' }}>{v[1].description.split(',')[1]}</Text></View>
           </View>
         </View>
@@ -115,20 +115,18 @@ export default class LocationSearch extends Component {
 
   render() {
 
-    
-
     return (
 
       <View style={styles.container}>
         <Header style={{ backgroundColor: 'black' }}>
           <StatusBar backgroundColor="black" barStyle="light-content" />
           <Left >
-            <Button transparent onPress={() => this.props.navigation.navigate('mainpanelpassenger')}>
+            <Button transparent onPress={() => this.props.navigation.navigate('mainpaneldriver')}>
               <Icon name='md-arrow-back' />
             </Button>
           </Left>
           <Body>
-            <Title>Search</Title>
+            <Title>Ride Search</Title>
           </Body>
           <Right>
           </Right>
@@ -142,6 +140,7 @@ export default class LocationSearch extends Component {
 
               <View style={styles.inputBox}><TextInput ref="pick" onChangeText={text => this.locationListener(text, 1)} onFocus={() => { this.setState({ pickupLocation: null }) }} placeholderTextColor="black" value={this.state.pickupLocation} placeholder="Your location" /></View>
               <View style={styles.inputBox}><TextInput ref="drop" onChangeText={text => this.locationListener(text, 0)} onFocus={() => { this.setState({ dropoffLocation: null }) }} autoFocus={true} value={this.state.dropoffLocation} placeholder="Dropoff location" /></View>
+              
 
             </View>
 
@@ -165,7 +164,7 @@ export default class LocationSearch extends Component {
 const styles = StyleSheet.create({
 
   container: {
-    flex: 1,
+    flex: 1
   },
   body: {
     flex: 1

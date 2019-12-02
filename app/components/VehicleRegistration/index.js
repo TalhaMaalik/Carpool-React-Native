@@ -1,40 +1,141 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity,Alert} from 'react-native';
 import { AsyncStorage, YellowBox } from 'react-native';
 import { Container, Header, Title, Icon, Left, Body, Button,Content, Input, Item, Right, Text } from "native-base";
+import { SetDriverRequest } from '../../API';
+import { ProgressDialog } from 'react-native-simple-dialogs';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export default class Login extends Component {
-  render() {
+
+  constructor(props) {
+
+    super(props)
+
+
+    this.state = {
+      desc:null,
+      plate:null,
+      year:null,
+      progressVisible: false,
+
+    }
+
+  }
+
+  requestRegister(){
+
+    var errors = [];
+    if (!this.state.desc) {
+      errors.push("Name field is empty.")
+    }
+    if (this.validatePlate() == 1) {
+      errors.push("Plate field is invalid(format: XXX-000)")
+    }
     
+    if (!this.state.year || this.state.year.length!=4 || (this.state.year>2020 || this.state.year<1980)) {
+      errors.push("Year field is invalid")
+    }
+
+    if (errors.length != 0) {
+
+      Alert.alert(
+        'Error Occured',
+        errors.join('\n'),
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
+    }
+    else {
+      this.setState({
+        progressVisible: true
+      })
+
+      RNFetchBlob.fetch('POST', SetDriverRequest, {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+        JSON.stringify({
+          email: global.email,
+          session_id: global.session,
+          model: this.state.year,
+          description:this.state.desc,
+          plate:this.state.plate
+        })
+
+      )
+        .then((res) => {
+          let text = res.json()
+          this.setState({
+            progressVisible: false
+          })
+          if (text.status == 200) {
+            Alert.alert('Sucesss', "Registered", [{ text: 'OK' }], { cancelable: true });
+            global.isDriver=1
+            this.props.navigation.navigate('mainpagedriver')
+
+          }
+          else {
+            Alert.alert('Error', "Invalid Details", [{ text: 'OK' }], { cancelable: true });
+          }
+
+        })
+        .catch((errorMessage, statusCode) => {
+          this.setState({
+            progressVisible: false
+          })
+          Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+        })
+
+
+  }
+  }
+
+  validatePlate() {
+
+    let reg = /^[A-Za-z]{3}-[0-9]{3}$/;
+    if (reg.test(this.state.plate) === false) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+
+  }
+  
+
+
+  render() {
 
     return (
       <View style={styles.container}>
         <View style={styles.titleView}>
           <Text style={styles.titleText}>
-            Register Your Vehicle
+            Register Vehicle
              </Text>
         </View>
 
         <View style={styles.inputView}>
           <Text style={styles.text}>Enter Your Vehicle Name</Text>
-          <TextInput style={styles.inputText} placeholder="vehicle name"
-            
-          />
-          <Text style={styles.text}>Enter Your Vehicle Number</Text>
-          <TextInput style={styles.inputText}  placeholder="vehicle number"
-            
-          />
+          <TextInput style={styles.inputText}  onChangeText={text => this.setState({ desc: text })} placeholder="Vehicle name"/>
+          <Text style={styles.text}>Enter Your Vehicle Plate</Text>
+          <TextInput style={styles.inputText}  onChangeText={text => this.setState({ plate: text })}  placeholder="Vehicle plate"/>
+          <Text style={styles.text}>Enter your Manufacture Year</Text>
+          <TextInput style={styles.inputText} keyboardType='numeric'  onChangeText={text => this.setState({ year: text })} placeholder="Vehicle year(eg: 2019)"/>
         </View>
 
         <View style={styles.buttonView}>
         <View style={styles.buttonView}>
-        <Button dark style = {styles.btn}  onPress={() => this.props.navigation.navigate('mainpaneldriver')} > 
+        <Button dark style = {styles.btn}  onPress={() => this.requestRegister()} > 
           <Text>Register</Text>
         </Button>
         </View>
 
         </View>
+        <ProgressDialog visible={this.state.progressVisible} title="Processing" message="Please, wait..." />
       </View>
     );
   }

@@ -3,9 +3,23 @@ import {StyleSheet, View, Alert } from 'react-native';
 import {Avatar} from 'react-native-paper'
 import { Provider as PaperProvider, List} from 'react-native-paper';
 import { Button, ListItem, Text, Icon, Left, Body,Right } from 'native-base';
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 
 export default class Sidebar extends Component {
+
+
+  deletetoken = async () => {
+
+    try {
+           await AsyncStorage.removeItem('session');
+        
+    } catch (error) {
+        console.log("error");
+    }
+
+  }
 
     logout(){
 
@@ -20,7 +34,7 @@ export default class Sidebar extends Component {
               {text: 'OK', onPress: () => {
 
 
-               // this.deletetoken()
+                this.deletetoken()
                 this.props.navigation.navigate('login')
             
             }},
@@ -28,6 +42,36 @@ export default class Sidebar extends Component {
             {cancelable: false},
           );
       }
+
+      renderButton(){
+        
+        if(global.frompassenger==1){
+
+          if(global.isDriver==1){
+            return(
+            <Button dark style = {styles.btn} onPress={() => this.props.navigation.navigate('mainpaneldriver')}> 
+            <Text>Driver Panel</Text>
+          </Button>)
+          }
+          else{
+            return(
+              <Button dark style = {styles.btn} onPress={() => this.props.navigation.navigate('VehicleRegistration')}> 
+              <Text>Register as Driver</Text>
+            </Button>)
+
+          }
+          
+        }
+        else{
+          return(
+            <Button dark style = {styles.btn} onPress={() => this.props.navigation.navigate('mainpanelpassenger')}> 
+            <Text>Passenger Panel</Text>
+          </Button>)
+        }
+
+
+      }
+
       
     render() {
       return (
@@ -41,8 +85,8 @@ export default class Sidebar extends Component {
             </View>
 
             <View style = {styles.infoView}>
-                <Text style = {styles.text}>Username</Text>
-                <Text style = {styles.text}>Username@nu.edu.pk</Text>
+                <Text style = {styles.text}>{global.name}</Text>
+                <Text style = {styles.text}>{global.email}</Text>
             </View>
 
             <View style = {styles.menuView}>
@@ -78,9 +122,8 @@ export default class Sidebar extends Component {
                
 
             <View style={styles.buttonView}>
-                <Button dark style = {styles.btn} onPress={() => this.props.navigation.navigate('vehicleregistration')}> 
-                  <Text>Become A Driver</Text>
-                </Button>
+              {this.renderButton()}
+                
             </View>
               
             </View>

@@ -1,10 +1,9 @@
 
 
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, StatusBar, TextInput, Alert } from 'react-native';
-import { Container, Header, Title, Button, Icon, Left, Body, Content, Textarea, Form, Right, Card, CardItem, Text, Item, Input, Label,Picker} from "native-base";
+import { StyleSheet, View, TouchableOpacity, StatusBar } from 'react-native';
+import {  Header, Title, Button, Icon, Left, Body, Right, Text,Picker} from "native-base";
 import  MapView from 'react-native-maps';
-import { Searchbar } from 'react-native-paper';
 import Geolocation from 'react-native-geolocation-service';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 
@@ -14,6 +13,7 @@ export default class MainPanelPassenger extends Component {
   constructor(props) {
 
     super(props)
+    global.frompassenger=1
 
 
     this.state = {
@@ -34,7 +34,8 @@ export default class MainPanelPassenger extends Component {
         lon: null
       },
       radius:3000,
-      fetchProcess:0
+      fetchProcess:0,
+      disabled:true,
 
     }
 
@@ -67,7 +68,14 @@ export default class MainPanelPassenger extends Component {
             name: this.props.navigation.state.params.dropoffObject.name,
             lat: this.props.navigation.state.params.dropoffObject.lat,
             lon: this.props.navigation.state.params.dropoffObject.lon
-          }
+          },
+          region: {
+            latitude: this.state.pickup.lat,
+            longitude:this.state.pickup.lon,
+            latitudeDelta: 0.3,
+            longitudeDelta: 0.3,
+          },
+          disabled:false
         })
       }
     }
@@ -168,8 +176,8 @@ export default class MainPanelPassenger extends Component {
           </View>
 
           <View style={styles.buttonCard}>
-            <Button dark full style={styles.goButton}><Text style={{ fontSize: 20 }}>Go</Text></Button>
-            <Picker style={{height: 65,fontSize:60,color:'white'}} itemStyle={{color:'white'}} selectedValue={this.state.radius}
+            <Button disabled={this.state.disabled} full style={styles.goButton} onPress={() => this.props.navigation.navigate('selectride')}><Text style={{ fontSize: 18 }}>Search</Text></Button>
+            <Picker style={{height: 65,fontSize:60,}} selectedValue={this.state.radius}
                       onValueChange={(itemValue, itemIndex) =>
                         this.setState({radius: itemValue})
                     }>
@@ -260,18 +268,23 @@ const styles = StyleSheet.create({
   buttonCard: {
     zIndex: 1,
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
+    left:20,
     width: "100%",
     backgroundColor:"black",
     flexWrap: 'wrap', 
     alignItems: 'flex-start',
     flexDirection:'row',
-    
+    width:"90%",
+    alignItems:'center',
+    alignContent:'center'
+  }
+    ,
 
-  },
   goButton: {
     height: 65,
-    width:"76%"
+    width:"90%",
+    
 
   }
 
