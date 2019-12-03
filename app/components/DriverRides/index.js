@@ -4,6 +4,7 @@ import { Header, Title, Icon, Left, Body, Button, Right, Text } from "native-bas
 import { Card, CardItem } from "native-base";
 import RNFetchBlob from 'rn-fetch-blob';
 import { GetDriverRide } from '../../API';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 export default class DriverRides extends Component {
@@ -11,7 +12,8 @@ export default class DriverRides extends Component {
     super(props);
 
     this.state = {
-      data: []
+      data: [],
+      time: new Date()
     }
 
   }
@@ -43,6 +45,40 @@ export default class DriverRides extends Component {
 
   }
 
+  delete(index,data){
+
+    var currenttime= this.state.time
+    var ridetime= new Date(data[1].time)
+    
+    if(currenttime.getTime()>ridetime.getTime()){
+      Alert.alert('Error', "Ride is already over", [{ text: 'OK' }], { cancelable: true });
+    }
+    else{
+
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to cancel the Ride?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => {
+
+          var array = [...this.state.data]
+          array.splice(index, 1);
+          this.setState({data: array});
+          
+      
+      }},
+      ],
+      {cancelable: false},
+    );
+
+  }
+
+  }
+
 
 
   renderList() {
@@ -52,7 +88,7 @@ export default class DriverRides extends Component {
       return (<View style={{ alignItems: 'center' }} ><Text>You haven't started any trip yet.</Text></View>)
     }
     return Object.entries(array).map((v, index) => {
-      return (<Card key={index}>
+      return (<TouchableOpacity key={index} onPress={()=>{this.delete(index,v)}}><Card >
 
         <CardItem key={index}>
           <Body style={styles.cardbody}>
@@ -63,7 +99,7 @@ export default class DriverRides extends Component {
         <CardItem style={styles.cardtitle}>
           <Text>Start:  {v[1].startLoc}</Text>
         </CardItem>
-      </Card>)
+      </Card></TouchableOpacity>)
     })
   }
 

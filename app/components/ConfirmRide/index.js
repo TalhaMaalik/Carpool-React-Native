@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Picker, StatusBar,Alert } from 'react-native';
 import { Header, Title, Icon, Left, Body, Button, Right, Text } from "native-base";
 import { Card, CardItem } from "native-base";
-import { BookTrip } from '../../API';
+import { BookTrip,CancelTrip} from '../../API';
 import RNFetchBlob from 'rn-fetch-blob';
 
 
@@ -14,9 +14,13 @@ export default class ConfirmRide extends Component {
     this.state = {
       book: 1,
       phone:0,
-      complete:0
+      complete:0,
+      trip:null,
+      timer:null
     };
   }
+
+
 
   book(){
 
@@ -27,15 +31,6 @@ export default class ConfirmRide extends Component {
 
       var time=this.props.navigation.state.params.time
       var ride=this.props.navigation.state.params.data.rideId
-
-      console.log(global.email)
-      console.log(global.session)
-      console.log(time)
-      console.log(ride)
-      console.log(this.state.book)
-
-    
-      
 
       
       RNFetchBlob.fetch('POST', BookTrip, {
@@ -53,12 +48,14 @@ export default class ConfirmRide extends Component {
         .then((res) => {
           let text = res.json()
 
-          console.log(text)
 
           if(text.status ==200){
             Alert.alert('Successful', "You ride is booked.", [{ text: 'OK' }], { cancelable: true });
-            this.setState({complete:1})
 
+            this.setState({complete:1,trip:text.data.trip_id})
+            var timer= setTimeout(() => {this.setState({complete: 2})}, 300000)
+           
+            this.setState({timer:timer})
 
           }
           else{
@@ -75,20 +72,74 @@ export default class ConfirmRide extends Component {
     }
 
   }
-  
+
+
+
+
   cancel(){
 
-    
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to cancel the trip?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => {
+
+          RNFetchBlob.fetch('POST', CancelTrip, {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+            JSON.stringify({
+              email: global.email,
+              session_id: global.session,
+              tripID:this.state.trip
+            })
+          )
+            .then((res) => {
+              let text = res.json()
+      
+              if(text.status==200){
+                this.setState({complete:0})
+              }
+              else{
+                Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+              }
+              
+            })
+            .catch((errorMessage, statusCode) => {
+              Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+            })
+      
+      }},
+      ],
+      {cancelable: false},
+    );
+
+   
+  
 
   }
+  componentWillUnmoun (){
+
+    clearInterval()
+    
+  };
+  
+
 
   renderButton(){
 
     if(this.state.complete==0){
       return( <Button style={styles.btn} onPress={()=>{this.book()}}><Text>Book Ride</Text></Button>)
     }
-    else{
-      return( <Button success style={styles.btn} onPress={()=>{this.cancel()}}><Text>Booked</Text></Button>)
+    if(this.state.complete==1){
+      return( <Button danger style={styles.btn} onPress={()=>{this.cancel()}}><Text>Cancel</Text></Button>)
+    }
+    if(this.state.complete==2){
+      return( <Button success style={styles.btn} ><Text>Booked</Text></Button>)
     }
 
   }
@@ -132,6 +183,7 @@ export default class ConfirmRide extends Component {
             <CardItem header style={styles.cardtitle}>
               <Text style={{ fontSize: 30 }}>Ride Details</Text>
             </CardItem>
+            
 
             <CardItem>
               <Body style={styles.cardbody}>

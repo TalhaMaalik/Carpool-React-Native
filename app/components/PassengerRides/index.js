@@ -3,7 +3,9 @@ import {StyleSheet, View,StatusBar,Alert,ScrollView} from 'react-native';
 import { Header, Title, Icon, Left, Body, Button, Right, Text} from "native-base";
 import { Card, CardItem} from "native-base";
 import RNFetchBlob from 'rn-fetch-blob';
-import { GetTrips } from '../../API';
+import { GetTrips,CancelTrip } from '../../API';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
 
 
 export default class PassengerRides extends Component {
@@ -12,9 +14,8 @@ export default class PassengerRides extends Component {
 
         this.state={
             data:[],
-            
+            time:new Date()
         }
-        
       }
 
     componentDidMount(){
@@ -47,6 +48,54 @@ export default class PassengerRides extends Component {
 
     }
 
+    Delete(index,data){
+
+    
+
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to cancel the Ride?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => {
+
+          RNFetchBlob.fetch('POST', CancelTrip, {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+            JSON.stringify({
+              email: global.email,
+              session_id: global.session,
+              tripID:data[1].id
+            })
+          )
+            .then((res) => {
+              let text = res.json()
+      
+              if(text.status==200){
+                var array = [...this.state.data]
+               array.splice(index, 1);
+               this.setState({data: array});
+              }
+              else{
+                Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+              }
+              
+            })
+            .catch((errorMessage, statusCode) => {
+              Alert.alert('Error', "Could not connect to server!", [{ text: 'OK' }], { cancelable: true });
+            })
+          
+      
+      }},
+      ],
+      {cancelable: false},
+    );
+
+    }
 
 
     renderList(){
@@ -56,7 +105,7 @@ export default class PassengerRides extends Component {
           return(<View style={{alignItems:'center'}} ><Text>You haven't booked any trip yet.</Text></View>)
         }
         return Object.entries(array).map((v, index) => {
-          return (<Card key={index}>
+          return (<TouchableOpacity key={index} onPress={()=>{this.Delete(index,v)}}><Card >
  
             <CardItem >
               <Body style={styles.cardbody}>
@@ -67,7 +116,10 @@ export default class PassengerRides extends Component {
             <CardItem style={styles.cardtitle}>
             <Text>Start:  {v[1].startLoc}</Text>
             </CardItem>
-         </Card>)
+            <CardItem style={styles.cardtitle}>
+            <Text>Phone:  {v[1].phone}</Text>
+            </CardItem>
+         </Card></TouchableOpacity>)
         })
     }
       
