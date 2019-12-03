@@ -11,7 +11,8 @@ export default class PassengerRides extends Component {
         super(props);
 
         this.state={
-            data:[]
+            data:[],
+            
         }
         
       }

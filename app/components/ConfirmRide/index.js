@@ -26,13 +26,15 @@ export default class ConfirmRide extends Component {
     else{
 
       var time=this.props.navigation.state.params.time
-      var ride=this.props.navigation.state.params.data.ride_id
+      var ride=this.props.navigation.state.params.data.rideId
 
       console.log(global.email)
       console.log(global.session)
-      console.log(this.props.navigation.state.params.time)
-      console.log(this.props.navigation.state.params.data.rideId)
+      console.log(time)
+      console.log(ride)
       console.log(this.state.book)
+
+    
       
 
       
@@ -45,7 +47,7 @@ export default class ConfirmRide extends Component {
           session_id: global.session,
           time:time,
           ride_id:ride,
-          seats:this.state.seats
+          seats:this.state.book
         })
       )
         .then((res) => {
@@ -53,7 +55,8 @@ export default class ConfirmRide extends Component {
 
           console.log(text)
 
-          if(text.status ==400){
+          if(text.status ==200){
+            Alert.alert('Successful', "You ride is booked.", [{ text: 'OK' }], { cancelable: true });
             this.setState({complete:1})
 
 
@@ -75,7 +78,7 @@ export default class ConfirmRide extends Component {
   
   cancel(){
 
-    this.setState({complete:0})
+    
 
   }
 
@@ -85,7 +88,7 @@ export default class ConfirmRide extends Component {
       return( <Button style={styles.btn} onPress={()=>{this.book()}}><Text>Book Ride</Text></Button>)
     }
     else{
-      return( <Button danger style={styles.btn} onPress={()=>{this.cancel()}}><Text>Cancel Ride</Text></Button>)
+      return( <Button success style={styles.btn} onPress={()=>{this.cancel()}}><Text>Booked</Text></Button>)
     }
 
   }
