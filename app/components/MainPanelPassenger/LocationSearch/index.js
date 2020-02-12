@@ -32,8 +32,7 @@ export default class LocationSearch extends Component {
       var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="
 
       text = encodeURI(text)
-      var region = "&location=24.93201,67.06969&radius=500&key=AIzaSyDcAzMoBi_1fxlaMxrpRcQr-P5vI4YL7Wk&sessiontoken=1234567890"
-      url = url + text + region
+
 
       RNFetchBlob.fetch('GET', url, { 'Accept': 'application/json', 'Content-Type': 'application/json' }).then((res) => {
 
@@ -58,8 +57,7 @@ export default class LocationSearch extends Component {
       })
       var locUrl = "https://maps.googleapis.com/maps/api/geocode/json?place_id="
       locationEncoded=location.place_id
-      var key = "&key=AIzaSyDcAzMoBi_1fxlaMxrpRcQr-P5vI4YL7Wk"
-      locUrl = locUrl + locationEncoded + key
+
       console.log(locUrl)
       RNFetchBlob.fetch('GET', locUrl, { 'Accept': 'application/json', 'Content-Type': 'application/json' }).then((res) => {
         let text = res.json()
@@ -79,9 +77,9 @@ export default class LocationSearch extends Component {
         dropoffLocation: location.description.split(",")[0]
       })
       var locUrl = "https://maps.googleapis.com/maps/api/geocode/json?place_id="
-      var locationEncoded =location.place_id
-      var key = "&key=AIzaSyDcAzMoBi_1fxlaMxrpRcQr-P5vI4YL7Wk"
-      locUrl = locUrl + locationEncoded + key
+
+      locUrl = locUrl + locationEncoded + 
+        
       RNFetchBlob.fetch('GET', locUrl, { 'Accept': 'application/json', 'Content-Type': 'application/json' }).then((result) => {
         let text = result.json()
         if (text.status == "OK") {
@@ -101,7 +99,8 @@ export default class LocationSearch extends Component {
       return null
     }
     return Object.entries(searchArray).map((v, index) => {
-      return (<TouchableOpacity onPress={() => { this.locationSelect(v[1]) }} key={index}>
+      return (<TouchableOpacity onPress={() => { this.locationSelect(v[1]) }} 
+                                           ={index}>
         <View style={styles.locationBlock}>
           <View style={styles.locationText}>
             <View styles={styles.locationUpperText}><Text style={{ fontSize: 18,color:'black' }}>{v[1].description.split(',')[0]}</Text></View>
