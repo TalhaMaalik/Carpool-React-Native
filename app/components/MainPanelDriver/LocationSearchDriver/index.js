@@ -33,7 +33,6 @@ export default class LocationSearchDriver extends Component {
       var url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="
 
       text = encodeURI(text)
-      var region = "&location=24.93201,67.06969&radius=500&key=AIzaSyDcAzMoBi_1fxlaMxrpRcQr-P5vI4YL7Wk&sessiontoken=1234567890"
       url = url + text + region
 
       RNFetchBlob.fetch('GET', url, { 'Accept': 'application/json', 'Content-Type': 'application/json' }).then((res) => {
@@ -59,7 +58,6 @@ export default class LocationSearchDriver extends Component {
       })
       var locUrl = "https://maps.googleapis.com/maps/api/geocode/json?place_id="
       locationEncoded=location.place_id
-      var key = "&key=AIzaSyDcAzMoBi_1fxlaMxrpRcQr-P5vI4YL7Wk"
       locUrl = locUrl + locationEncoded + key
       console.log(locUrl)
       RNFetchBlob.fetch('GET', locUrl, { 'Accept': 'application/json', 'Content-Type': 'application/json' }).then((res) => {
@@ -81,7 +79,6 @@ export default class LocationSearchDriver extends Component {
       })
       var locUrl = "https://maps.googleapis.com/maps/api/geocode/json?place_id="
       var locationEncoded =location.place_id
-      var key = "&key=AIzaSyDcAzMoBi_1fxlaMxrpRcQr-P5vI4YL7Wk"
       locUrl = locUrl + locationEncoded + key
       RNFetchBlob.fetch('GET', locUrl, { 'Accept': 'application/json', 'Content-Type': 'application/json' }).then((result) => {
         let text = result.json()
